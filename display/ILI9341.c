@@ -965,7 +965,7 @@ static int _sendDataPixels(const ili9341_t *dev, const lv_color_t *pixel, uint32
 #endif
 #if (ILI9341_PAR_SUPPORT)
     case ILI9341_PROTO_8080_8BIT:
-        err_control(par_send(dev->spi_dev, 1, (uint8_t*)pixel, len, wordsize));
+        err_control(par_send(dev->par_dev, 1, (uint8_t*)pixel, len, wordsize));
         break;
 #endif
     default:
@@ -998,7 +998,7 @@ static int _sendCommandData(const ili9341_t *dev, uint8_t cmd, uint8_t* data_out
 #endif
 #if (ILI9341_PAR_SUPPORT)
     case ILI9341_PROTO_8080_8BIT:
-        err_control(par_send(dev->spi_dev, 1, data_out, len, 1));
+        err_control(par_send(dev->par_dev, 1, data_out, len, 1));
         break;
 #endif
     default:
