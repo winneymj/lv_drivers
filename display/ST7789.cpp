@@ -24,17 +24,9 @@
 #include "ST7789.h"
 #if USE_ST7789
 
-// #include <stdio.h>
-// #include <unistd.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-// #include <fcntl.h>
-
-// #include "lvgl/lv_core/lv_vdb.h"
-// #include "lv_drivers/itf/i2c.h"
-// #include "lv_drivers/itf/spi.h"
-// #include "lv_drivers/itf/gpio.h"
 
 #include LV_DRV_DISP_INCLUDE
 #include LV_DRV_DELAY_INCLUDE
@@ -42,15 +34,8 @@
 /*********************
  *      DEFINES
  *********************/
-#define SSD1963_CMD_MODE     0
-#define SSD1963_DATA_MODE    1
-
-//#define ST_GPIO_FILE_VALUE "/sys/class/gpio/gpio2_pc5/value"
-
-
-//#define ST7789_BAUD      2000000    /*< 2,5 MHz (400 ns)*/
-
-
+#define ST7789_CMD_MODE     0
+#define ST7789_DATA_MODE    1
 
 #define CMD_DISPLAY_OFF         0xAE
 #define CMD_DISPLAY_ON          0xAF
@@ -368,14 +353,17 @@ void st7789_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 
   st7789_set_addr_win(x, y, x + w - 1, y + h - 1);
 
-	uint8_t hi = color >> 8, lo = color;
+	// uint8_t hi = color >> 8, lo = color;
     
   LV_DRV_DISP_SPI_CS(0);  // Listen to us
 
-  for(y = h; y > 0; y--) {
-    for(x = w; x > 0; x--) {
-      st7789_data(hi);
-      st7789_data(lo);
+  for(y = h; y > 0; y--)
+  {
+    for(x = w; x > 0; x--)
+    {
+      LV_DRV_DISP_SPI_WR_ARRAY((const char *)&color, 2);
+      // st7789_data(hi);
+      // st7789_data(lo);
     }
   }
   LV_DRV_DISP_SPI_CS(1);
@@ -419,6 +407,9 @@ void st7789_setRotation(uint8_t m) {
  */
 int st7789_init(void)
 {
+  LV_DRV_DISP_SPI_FREQ(ST7789_SPI_BAUD);
+  LV_DRV_DISP_SPI_MODE(ST7789_SPI_BITS, ST7789_SPI_MODE);
+
 	st7789_hard_reset();
 
 	st7789_run_cfg_script();
