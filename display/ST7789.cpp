@@ -283,12 +283,12 @@ void st7789_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
   if((x >= ST7789_HOR_RES) || (y >= ST7789_VER_RES)) return;
   if((y+h-1) >= ST7789_VER_RES) h = ST7789_VER_RES - y;
 
+	LV_DRV_DISP_SPI_CS(0); // Listen to us
+
   st7789_set_addr_win(x, y, x, y + h - 1);
 
   uint8_t hi = color >> 8, lo = color;
     
-	LV_DRV_DISP_SPI_CS(0); // Listen to us
-
   while (h--) {
     st7789_data(hi);
     st7789_data(lo);
@@ -301,11 +301,12 @@ void st7789_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
   // Rudimentary clipping
   if((x >= ST7789_HOR_RES) || (y >= ST7789_VER_RES)) return;
   if((x+w-1) >= ST7789_HOR_RES)  w = ST7789_HOR_RES - x;
+
+	LV_DRV_DISP_SPI_CS(0); // Listen to us
+
   st7789_set_addr_win(x, y, x + w - 1, y);
 
   uint8_t hi = color >> 8, lo = color;
-
-	LV_DRV_DISP_SPI_CS(0); // Listen to us
 
   while (w--) {
     st7789_data(hi);
@@ -330,9 +331,9 @@ void st7789_drawPixel(int16_t x, int16_t y, uint16_t color)
 {
   if((x < 0) ||(x >= ST7789_HOR_RES) || (y < 0) || (y >= ST7789_VER_RES)) return;
 
-  st7789_set_addr_win(x, y, x + 1, y + 1);
-
 	LV_DRV_DISP_SPI_CS(0); // Listen to us
+
+  st7789_set_addr_win(x, y, x + 1, y + 1);
 
   st7789_data(color >> 8);
   st7789_data(color);
@@ -351,15 +352,15 @@ void st7789_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
   if((x + w - 1) >= ST7789_HOR_RES)  w = ST7789_HOR_RES  - x;
   if((y + h - 1) >= ST7789_VER_RES) h = ST7789_VER_RES - y;
 
+  LV_DRV_DISP_SPI_CS(0);  // Listen to us
+
   st7789_set_addr_win(x, y, x + w - 1, y + h - 1);
 
 	// uint8_t hi = color >> 8, lo = color;
     
-  LV_DRV_DISP_SPI_CS(0);  // Listen to us
-
-  for(y = h; y > 0; y--)
+  for (y = h; y > 0; y--)
   {
-    for(x = w; x > 0; x--)
+    for (x = w; x > 0; x--)
     {
       LV_DRV_DISP_SPI_WR_ARRAY((const char *)&color, 2);
       // st7789_data(hi);
@@ -414,7 +415,7 @@ int st7789_init(void)
 
 	st7789_run_cfg_script();
 
-	st7789_fillScreen(0xffff);
+	st7789_fillScreen(0x0f0f);
 
 	return 0;
 }
@@ -438,8 +439,8 @@ static void st7789_set_addr_win(int xs, int xe, int ys, int ye)
 void st7789_flush(struct _disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t *color_p)
 {
     int32_t x, y;
-    for(y = area->y1; y <= area->y2; y++) {
-        for(x = area->x1; x <= area->x2; x++) {
+    for (y = area->y1; y <= area->y2; y++) {
+        for (x = area->x1; x <= area->x2; x++) {
             st7789_drawPixel(x, y, color_p->full);  /* Put a pixel to the display.*/
             color_p++;
         }
