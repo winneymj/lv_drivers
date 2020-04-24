@@ -2,13 +2,25 @@
 #define __COMMON_H__
 
 #include <mbed.h>
+#include <../../lv_drv_conf.h>
 
 // /* GLOBAL PINSSSSSS */
+#if ST7789_SPI_BITS == 8
 DigitalOut cmd_data(P0_6);
+#endif
+#if ST7789_SPI_BITS == 9
+uint8_t cmd_data;
+#endif
 DigitalOut reset(P0_7);
 DigitalOut spi_cs(P0_8);
+
+#if ST7789_SPI_BITS == 8
 SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, NC);
-// // SPI spi(PB_5, PB_4, PB_3); // mosi, miso, sclk
+#endif
+#if ST7789_SPI_BITS == 9
+DigitalOut mosi(SPI_PSELMOSI0);
+DigitalOut sck(SPI_PSELSCK0);
+#endif
 
 // /* FNC PROTOTYPES */
 void pin_rst_set(int); // set reset pin to a value
@@ -20,7 +32,6 @@ void spi_wr_mem(uint8_t *, uint32_t);
 void spi_set_freq(int); // set baudrate
 void spi_mode(uint8_t, int8_t);
 
-// /* FNC DEFINITIONS */
 void pin_rst_set(int val) {
 	reset = val;
 }
@@ -37,30 +48,55 @@ void spi_cs_set(int val) {
 // a single byte so we just write it as a 32 bits integer
 void spi_wr(uint8_t data)
 {
+#if ST7789_SPI_BITS == 8
 	spi.write(data);
+#endif
+#if ST7789_SPI_BITS == 9
+	sck = 0; // Clock low
+	if (cmd_data) mosi = 1;
+	else				  mosi = 0;
+	sck = 0; // Clock high
+
+	// Fast SPI bitbang
+	for(uint8_t bit = 0x80; bit; bit >>= 1) {
+		sck = 0;
+		if (data & bit) mosi = 1;
+		else            mosi = 0;
+		sck = 1;
+	}
+#endif
 }
 
 void spi_wr_mem(const char *addr, uint32_t len)
 {
+#if ST7789_SPI_BITS == 8
   spi.write(addr, len, NULL, 0);
+#endif
+#if ST7789_SPI_BITS == 9
+// TODO write 9 bit version
+#endif
 }
 
 // // @TODO need to check if this logic is correct for writing to an address on the spi bus
 // void spi_wr_mem(uint32_t addr, uint32_t data) {
 // 	spi_cs = 0;
 // 	spi.write(addr); // write to address 1st
-// 	spi.write(data); // write them bytes
+// 	spi.write(data); //9 write them bytes
 // 	spi_cs = 1;
 // }
 
 void spi_mode(uint8_t bits, int8_t mode)
 {
+#if ST7789_SPI_BITS == 8
 	spi.format(bits, mode);
+#endif
 }
 
 void spi_set_freq(int val)
 {
+#if ST7789_SPI_BITS == 8
 	spi.frequency(val);
+#endif
 }
 
 
