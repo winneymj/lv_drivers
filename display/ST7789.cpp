@@ -445,7 +445,7 @@ int st7789_init(void)
 
 	st7789_run_cfg_script();
 
-	st7789_fillScreen(0x0f0f);
+	st7789_fillScreen(0x0000); // BLACK
 
 	return 0;
 }
