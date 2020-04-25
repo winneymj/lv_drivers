@@ -18,8 +18,8 @@ DigitalOut spi_cs(P0_8);
 SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, NC);
 #endif
 #if ST7789_SPI_BITS == 9
-DigitalOut mosi(SPI_PSELMOSI0);
-DigitalOut sck(SPI_PSELSCK0);
+DigitalOut spi_mosi(SPI_PSELMOSI0);
+DigitalOut spi_sck(P0_17);
 #endif
 
 // /* FNC PROTOTYPES */
@@ -31,6 +31,8 @@ void spi_wr_mem(uint8_t *, uint32_t);
 // void spi_wr_mem(uint32_t, uint32_t); // not correct 
 void spi_set_freq(int); // set baudrate
 void spi_mode(uint8_t, int8_t);
+void delay_ms(int);
+void delay_us(int);
 
 void pin_rst_set(int val) {
 	reset = val;
@@ -52,17 +54,17 @@ void spi_wr(uint8_t data)
 	spi.write(data);
 #endif
 #if ST7789_SPI_BITS == 9
-	sck = 0; // Clock low
-	if (cmd_data) mosi = 1;
-	else				  mosi = 0;
-	sck = 0; // Clock high
+	spi_sck = 0; // Clock low
+	if (cmd_data) spi_mosi = 1;
+	else				  spi_mosi = 0;
+	spi_sck = 1; // Clock high
 
 	// Fast SPI bitbang
 	for(uint8_t bit = 0x80; bit; bit >>= 1) {
-		sck = 0;
-		if (data & bit) mosi = 1;
-		else            mosi = 0;
-		sck = 1;
+		spi_sck = 0;
+		if (data & bit) spi_mosi = 1;
+		else            spi_mosi = 0;
+		spi_sck = 1;
 	}
 #endif
 }
@@ -99,5 +101,12 @@ void spi_set_freq(int val)
 #endif
 }
 
+void delay_ms(int val) {
+  wait_ms(val);
+}
+
+void delay_us(int val) {
+  wait_us(val);
+}
 
 #endif

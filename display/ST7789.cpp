@@ -86,7 +86,7 @@
 //static void st7789_sync(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 static void st7789_command(uint8_t cmd);
 static void st7789_data(uint8_t data);
-static void st7789_set_addr_win(int xs, int xe, int ys, int ye);
+static void st7789_set_addr_win(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
 
 
 /**********************
@@ -96,81 +96,111 @@ static void st7789_set_addr_win(int xs, int xe, int ys, int ye);
 // static uint16_t lcd_fb[ST7789_FB_SIZE];
 //static uint8_t pagemap[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 
+// static struct st7789_function st7789_cfg_script[] = {
+// 	{ ST7789_START, ST7789_START},
+// 	{ ST7789_CMD, ST7789_SWRESET},
+// 	{ ST7789_DELAY, 150},
+// 	{ ST7789_CMD, ST7789_SLPOUT},
+// 	{ ST7789_DELAY, 500},
+// 	{ ST7789_CMD, ST7789_INVOFF},
+// 	{ ST7789_CMD, ST7789_MADCTL},
+// 	{ ST7789_DATA, 0xA0},
+// 	{ ST7789_CMD, ST7789_COLMOD},
+// 	{ ST7789_DATA, 0x05},
+// 	{ ST7789_CMD, ST7789_PORCTRL},
+// 	{ ST7789_DATA, 0x0C},
+// 	{ ST7789_DATA, 0x0C},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x33},
+// 	{ ST7789_DATA, 0x33},
+// 	{ ST7789_CMD, ST7789_GCTRL},
+// 	{ ST7789_DATA, 0x35},
+// 	{ ST7789_CMD, ST7789_VDVVRHEN},
+// 	{ ST7789_DATA, 0x01},
+// 	{ ST7789_DATA, 0xFF},
+// 	{ ST7789_CMD, ST7789_VRHS},
+// 	{ ST7789_DATA, 0x17},
+// 	{ ST7789_CMD, ST7789_VDVSET},
+// 	{ ST7789_DATA, 0x20},
+// 	{ ST7789_CMD, ST7789_VCOMS},
+// 	{ ST7789_DATA, 0x17},
+// 	{ ST7789_CMD, ST7789_VCMOFSET},
+// 	{ ST7789_DATA, 0x20},
+// 	{ ST7789_CMD, ST7789_PWCTRL1},
+// 	{ ST7789_DATA, 0xA4},
+// 	{ ST7789_DATA, 0xA1},
+// 	{ ST7789_CMD, ST7789_PVGAMCTRL},
+// 	{ ST7789_DATA, 0xD0},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x14},
+// 	{ ST7789_DATA, 0x15},
+// 	{ ST7789_DATA, 0x13},
+// 	{ ST7789_DATA, 0x2C},
+// 	{ ST7789_DATA, 0x42},
+// 	{ ST7789_DATA, 0x43},
+// 	{ ST7789_DATA, 0x4E},
+// 	{ ST7789_DATA, 0x09},
+// 	{ ST7789_DATA, 0x16},
+// 	{ ST7789_DATA, 0x14},
+// 	{ ST7789_DATA, 0x18},
+// 	{ ST7789_DATA, 0x21},
+// 	{ ST7789_CMD, ST7789_NVGAMCTRL},
+// 	{ ST7789_DATA, 0xD0},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x14},
+// 	{ ST7789_DATA, 0x15},
+// 	{ ST7789_DATA, 0x13},
+// 	{ ST7789_DATA, 0x0B},
+// 	{ ST7789_DATA, 0x43},
+// 	{ ST7789_DATA, 0x55},
+// 	{ ST7789_DATA, 0x53},
+// 	{ ST7789_DATA, 0x0C},
+// 	{ ST7789_DATA, 0x17},
+// 	{ ST7789_DATA, 0x14},
+// 	{ ST7789_DATA, 0x23},
+// 	{ ST7789_DATA, 0x20},
+// 	{ ST7789_CMD, ST7789_CASET},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x01},
+// 	{ ST7789_DATA, 0x3F},
+// 	{ ST7789_CMD, ST7789_RASET},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0x00},
+// 	{ ST7789_DATA, 0xEF},
+// 	{ ST7789_CMD, ST7789_DISPON},
+// 	{ ST7789_DELAY, 100},
+// 	{ ST7789_END, ST7789_END},
+// };
+
 static struct st7789_function st7789_cfg_script[] = {
 	{ ST7789_START, ST7789_START},
 	{ ST7789_CMD, ST7789_SWRESET},
 	{ ST7789_DELAY, 150},
 	{ ST7789_CMD, ST7789_SLPOUT},
-	{ ST7789_DELAY, 500},
-	{ ST7789_CMD, ST7789_INVOFF},
-	{ ST7789_CMD, ST7789_MADCTL},
-	{ ST7789_DATA, 0xA0},
+	{ ST7789_DELAY, 255},
 	{ ST7789_CMD, ST7789_COLMOD},
-	{ ST7789_DATA, 0x05},
-	{ ST7789_CMD, ST7789_PORCTRL},
-	{ ST7789_DATA, 0x0C},
-	{ ST7789_DATA, 0x0C},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x33},
-	{ ST7789_DATA, 0x33},
-	{ ST7789_CMD, ST7789_GCTRL},
-	{ ST7789_DATA, 0x35},
-	{ ST7789_CMD, ST7789_VDVVRHEN},
-	{ ST7789_DATA, 0x01},
-	{ ST7789_DATA, 0xFF},
-	{ ST7789_CMD, ST7789_VRHS},
-	{ ST7789_DATA, 0x17},
-	{ ST7789_CMD, ST7789_VDVSET},
-	{ ST7789_DATA, 0x20},
-	{ ST7789_CMD, ST7789_VCOMS},
-	{ ST7789_DATA, 0x17},
-	{ ST7789_CMD, ST7789_VCMOFSET},
-	{ ST7789_DATA, 0x20},
-	{ ST7789_CMD, ST7789_PWCTRL1},
-	{ ST7789_DATA, 0xA4},
-	{ ST7789_DATA, 0xA1},
-	{ ST7789_CMD, ST7789_PVGAMCTRL},
-	{ ST7789_DATA, 0xD0},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x14},
-	{ ST7789_DATA, 0x15},
-	{ ST7789_DATA, 0x13},
-	{ ST7789_DATA, 0x2C},
-	{ ST7789_DATA, 0x42},
-	{ ST7789_DATA, 0x43},
-	{ ST7789_DATA, 0x4E},
-	{ ST7789_DATA, 0x09},
-	{ ST7789_DATA, 0x16},
-	{ ST7789_DATA, 0x14},
-	{ ST7789_DATA, 0x18},
-	{ ST7789_DATA, 0x21},
-	{ ST7789_CMD, ST7789_NVGAMCTRL},
-	{ ST7789_DATA, 0xD0},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x14},
-	{ ST7789_DATA, 0x15},
-	{ ST7789_DATA, 0x13},
-	{ ST7789_DATA, 0x0B},
-	{ ST7789_DATA, 0x43},
 	{ ST7789_DATA, 0x55},
-	{ ST7789_DATA, 0x53},
-	{ ST7789_DATA, 0x0C},
-	{ ST7789_DATA, 0x17},
-	{ ST7789_DATA, 0x14},
-	{ ST7789_DATA, 0x23},
-	{ ST7789_DATA, 0x20},
+	{ ST7789_DELAY, 10},
+	{ ST7789_CMD, ST7789_MADCTL},
+	{ ST7789_DATA, 0x00},
 	{ ST7789_CMD, ST7789_CASET},
 	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x01},
-	{ ST7789_DATA, 0x3F},
+	{ ST7789_DATA, ST7789_XSTART},
+	{ ST7789_DATA, (ST7789_HOR_RES + ST7789_XSTART) >> 8},
+	{ ST7789_DATA, (ST7789_HOR_RES + ST7789_XSTART) & 0xff},
 	{ ST7789_CMD, ST7789_RASET},
 	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0x00},
-	{ ST7789_DATA, 0xEF},
+	{ ST7789_DATA, ST7789_YSTART},
+	{ ST7789_DATA, (ST7789_VER_RES + ST7789_YSTART) >> 8},
+	{ ST7789_DATA, (ST7789_VER_RES + ST7789_YSTART) & 0xff},
+	{ ST7789_CMD, ST7789_INVON},
+	{ ST7789_DELAY, 10},
+	{ ST7789_CMD, ST7789_NORON},
+	{ ST7789_DELAY, 10},
 	{ ST7789_CMD, ST7789_DISPON},
-	{ ST7789_DELAY, 100},
+	{ ST7789_DELAY, 255},
 	{ ST7789_END, ST7789_END},
 };
 
@@ -356,15 +386,15 @@ void st7789_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 
   st7789_set_addr_win(x, y, x + w - 1, y + h - 1);
 
-	// uint8_t hi = color >> 8, lo = color;
+	uint8_t hi = color >> 8, lo = color;
     
   for (y = h; y > 0; y--)
   {
     for (x = w; x > 0; x--)
     {
-      LV_DRV_DISP_SPI_WR_ARRAY((const char *)&color, 2);
-      // st7789_data(hi);
-      // st7789_data(lo);
+      // LV_DRV_DISP_SPI_WR_ARRAY((const char *)&color, 2);
+      st7789_data(hi);
+      st7789_data(lo);
     }
   }
   LV_DRV_DISP_SPI_CS(1);
@@ -420,18 +450,22 @@ int st7789_init(void)
 	return 0;
 }
 
-static void st7789_set_addr_win(int xs, int xe, int ys, int ye)
+static void st7789_set_addr_win(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-	st7789_command(ST7789_CASET);
-	st7789_data(((xs>>8)&0xFF)); // XStart
-	st7789_data((xs&0xFF));
-	st7789_data(((xe>>8)&0xFF)); // XEnd
-	st7789_data((xe&0xFF));
-	st7789_command(ST7789_RASET);
-	st7789_data(((ys>>8)&0xFF)); // YStart
-	st7789_data((ys&0xFF));
-	st7789_data(((ye>>8)&0xFF)); // YEnd
-	st7789_data((ye&0xFF));
+  uint16_t x_start = x0 + ST7789_XSTART, x_end = x1 + ST7789_XSTART;
+  uint16_t y_start = y0 + ST7789_YSTART, y_end = y1 + ST7789_YSTART;
+
+  st7789_command(ST7789_CASET); // Column addr set
+  st7789_data(x_start >> 8);
+  st7789_data(x_start & 0xFF);     // XSTART 
+  st7789_data(x_end >> 8);
+  st7789_data(x_end & 0xFF);     // XEND
+
+  st7789_command(ST7789_RASET); // Row addr set
+  st7789_data(y_start >> 8);
+  st7789_data(y_start & 0xFF);     // YSTART
+  st7789_data(y_end >> 8);
+  st7789_data(y_end & 0xFF);     // YEND
 
   st7789_command(ST7789_RAMWR);
 }
