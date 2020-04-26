@@ -134,11 +134,8 @@ void st7789_fillScreen(uint16_t color);
 uint16_t st7789_Color565(uint8_t r, uint8_t g, uint8_t b);
 void st7789_invertDisplay(bool i);
 void st7789_drawPixel(int16_t x, int16_t y, uint16_t color);
-
-
-
-
-
+void st7789_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+void st7789_drawFastVLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 
 /**********************
  *      MACROS
