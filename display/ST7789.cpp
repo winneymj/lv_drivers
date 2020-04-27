@@ -299,7 +299,7 @@ static void st7789_run_cfg_script(void)
 				st7789_data( st7789_cfg_script[i].data & 0xFF );
 				break;
 			case ST7789_DELAY:
-                LV_DRV_DELAY_MS(st7789_cfg_script[i].data);
+        LV_DRV_DELAY_MS(st7789_cfg_script[i].data);
 				break;
 			case ST7789_END:
 				end_script = 1;
@@ -472,15 +472,23 @@ static void st7789_set_addr_win(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 
 void st7789_flush(struct _disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t *color_p)
 {
-    int32_t x, y;
-    for (y = area->y1; y <= area->y2; y++) {
-        for (x = area->x1; x <= area->x2; x++) {
-            st7789_drawPixel(x, y, color_p->full);  /* Put a pixel to the display.*/
-            color_p++;
-        }
-    }
+  LV_DRV_DISP_SPI_CS(0); // Listen to us
 
-    lv_disp_flush_ready(disp_drv);         /* Indicate you are ready with the flushing*/
+  st7789_set_addr_win(area->x1, area->y1, area->x2, area->y2);
+  int32_t len = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
+  LV_DRV_DISP_SPI_WR_ARRAY((uint8_t *)color_p, len);
+
+  LV_DRV_DISP_SPI_CS(1);
+
+  // int32_t x, y;
+  // for (y = area->y1; y <= area->y2; y++) {
+  //     for (x = area->x1; x <= area->x2; x++) {
+  //         st7789_drawPixel(x, y, color_p->full);  /* Put a pixel to the display.*/
+  //         color_p++;
+  //     }
+  // }
+
+  lv_disp_flush_ready(disp_drv);         /* Indicate you are ready with the flushing*/
 }
 
 // void st7789_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t * color_p)

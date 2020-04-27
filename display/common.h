@@ -69,13 +69,18 @@ void spi_wr(uint8_t data)
 #endif
 }
 
-void spi_wr_mem(const char *addr, uint32_t len)
+void spi_wr_mem(uint8_t *addr, uint32_t len)
 {
 #if ST7789_SPI_BITS == 8
   spi.write(addr, len, NULL, 0);
 #endif
 #if ST7789_SPI_BITS == 9
-// TODO write 9 bit version
+	cmd_data = 1; // Set to data
+	uint8_t *ptr = (uint8_t *)addr;
+	for (uint32_t i = 0; i < len; i++) {
+		spi_wr(*ptr);
+		ptr++;
+	}
 #endif
 }
 
