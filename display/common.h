@@ -5,19 +5,19 @@
 #include <../../lv_drv_conf.h>
 
 // /* GLOBAL PINSSSSSS */
-#if ST7789_SPI_BITS == 8
+#if GC9A01_SPI_BITS == 8
 DigitalOut cmd_data(P0_6);
 #endif
-#if ST7789_SPI_BITS == 9
+#if GC9A01_SPI_BITS == 9
 uint8_t cmd_data;
 #endif
 DigitalOut reset(P0_7);
 DigitalOut spi_cs(P0_8);
 
-#if ST7789_SPI_BITS == 8
+#if GC9A01_SPI_BITS == 8
 SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, NC);
 #endif
-#if ST7789_SPI_BITS == 9
+#if GC9A01_SPI_BITS == 9
 DigitalOut spi_mosi(SPI_PSELMOSI0);
 DigitalOut spi_sck(P0_17);
 #endif
