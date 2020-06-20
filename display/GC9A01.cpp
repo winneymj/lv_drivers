@@ -458,13 +458,13 @@ static int GC9A01_databuf(uint32_t len, uint8_t *buf)
 	{
 		if (byte_left > 64)
 		{
-			LV_DRV_DISP_SPI_WR_ARRAY(pt, 64);
+			LV_DRV_DISP_SPI_WR_ARRAY((char*)pt, 64);
 			byte_left = byte_left - 64;
 			pt = pt + 64;
 		}
 		else
 		{
-			LV_DRV_DISP_SPI_WR_ARRAY(pt, byte_left);
+			LV_DRV_DISP_SPI_WR_ARRAY((char*)pt, byte_left);
 			byte_left=0;
 		}
 	}
@@ -682,7 +682,7 @@ void GC9A01_flush(struct _disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 
   GC9A01_set_addr_win(area->x1, area->y1, area->x2, area->y2);
   int32_t len = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
-  LV_DRV_DISP_SPI_WR_ARRAY((uint8_t *)color_p, len);
+  LV_DRV_DISP_SPI_WR_ARRAY((char*)color_p, len);
 
   LV_DRV_DISP_SPI_CS(1);
 
