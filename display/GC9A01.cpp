@@ -598,7 +598,6 @@ void GC9A01_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
   {
     for (x = w; x > 0; x--)
     {
-      // LV_DRV_DISP_SPI_WR_ARRAY((const char *)&color, 2);
       GC9A01_data(hi);
       GC9A01_data(lo);
     }
@@ -651,7 +650,7 @@ int GC9A01_init(void)
 
 	GC9A01_run_cfg_script();
 
-	GC9A01_fillScreen(0x0000); // BLACK
+	GC9A01_fillScreen(0xF800); // BLACK
 
 	return 0;
 }
