@@ -96,84 +96,6 @@ static void GC9A01_set_addr_win(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 // static uint16_t lcd_fb[GC9A01_FB_SIZE];
 //static uint8_t pagemap[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 
-// static struct GC9A01_function GC9A01_cfg_script[] = {
-// 	{ GC9A01_START, GC9A01_START},
-// 	{ GC9A01_CMD, GC9A01_SWRESET},
-// 	{ GC9A01_DELAY, 150},
-// 	{ GC9A01_CMD, GC9A01_SLPOUT},
-// 	{ GC9A01_DELAY, 500},
-// 	{ GC9A01_CMD, GC9A01_INVOFF},
-// 	{ GC9A01_CMD, GC9A01_MADCTL},
-// 	{ GC9A01_DATA, 0xA0},
-// 	{ GC9A01_CMD, GC9A01_COLMOD},
-// 	{ GC9A01_DATA, 0x05},
-// 	{ GC9A01_CMD, GC9A01_PORCTRL},
-// 	{ GC9A01_DATA, 0x0C},
-// 	{ GC9A01_DATA, 0x0C},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x33},
-// 	{ GC9A01_DATA, 0x33},
-// 	{ GC9A01_CMD, GC9A01_GCTRL},
-// 	{ GC9A01_DATA, 0x35},
-// 	{ GC9A01_CMD, GC9A01_VDVVRHEN},
-// 	{ GC9A01_DATA, 0x01},
-// 	{ GC9A01_DATA, 0xFF},
-// 	{ GC9A01_CMD, GC9A01_VRHS},
-// 	{ GC9A01_DATA, 0x17},
-// 	{ GC9A01_CMD, GC9A01_VDVSET},
-// 	{ GC9A01_DATA, 0x20},
-// 	{ GC9A01_CMD, GC9A01_VCOMS},
-// 	{ GC9A01_DATA, 0x17},
-// 	{ GC9A01_CMD, GC9A01_VCMOFSET},
-// 	{ GC9A01_DATA, 0x20},
-// 	{ GC9A01_CMD, GC9A01_PWCTRL1},
-// 	{ GC9A01_DATA, 0xA4},
-// 	{ GC9A01_DATA, 0xA1},
-// 	{ GC9A01_CMD, GC9A01_PVGAMCTRL},
-// 	{ GC9A01_DATA, 0xD0},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x14},
-// 	{ GC9A01_DATA, 0x15},
-// 	{ GC9A01_DATA, 0x13},
-// 	{ GC9A01_DATA, 0x2C},
-// 	{ GC9A01_DATA, 0x42},
-// 	{ GC9A01_DATA, 0x43},
-// 	{ GC9A01_DATA, 0x4E},
-// 	{ GC9A01_DATA, 0x09},
-// 	{ GC9A01_DATA, 0x16},
-// 	{ GC9A01_DATA, 0x14},
-// 	{ GC9A01_DATA, 0x18},
-// 	{ GC9A01_DATA, 0x21},
-// 	{ GC9A01_CMD, GC9A01_NVGAMCTRL},
-// 	{ GC9A01_DATA, 0xD0},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x14},
-// 	{ GC9A01_DATA, 0x15},
-// 	{ GC9A01_DATA, 0x13},
-// 	{ GC9A01_DATA, 0x0B},
-// 	{ GC9A01_DATA, 0x43},
-// 	{ GC9A01_DATA, 0x55},
-// 	{ GC9A01_DATA, 0x53},
-// 	{ GC9A01_DATA, 0x0C},
-// 	{ GC9A01_DATA, 0x17},
-// 	{ GC9A01_DATA, 0x14},
-// 	{ GC9A01_DATA, 0x23},
-// 	{ GC9A01_DATA, 0x20},
-// 	{ GC9A01_CMD, GC9A01_CASET},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x01},
-// 	{ GC9A01_DATA, 0x3F},
-// 	{ GC9A01_CMD, GC9A01_RASET},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0x00},
-// 	{ GC9A01_DATA, 0xEF},
-// 	{ GC9A01_CMD, GC9A01_DISPON},
-// 	{ GC9A01_DELAY, 100},
-// 	{ GC9A01_END, GC9A01_END},
-// };
-
 static struct GC9A01_function GC9A01_cfg_script[] = {
 	{ GC9A01_START, GC9A01_START},
 	{ GC9A01_CMD, 0xEF},
@@ -568,11 +490,12 @@ void GC9A01_drawPixel(int16_t x, int16_t y, uint16_t color)
   if((x < 0) ||(x >= GC9A01_HOR_RES) || (y < 0) || (y >= GC9A01_VER_RES)) return;
 
 	LV_DRV_DISP_SPI_CS(0); // Listen to us
+  GC9A01_set_addr_win(x, y, x, y);
 
-  GC9A01_set_addr_win(x, y, x + 1, y + 1);
+  uint8_t hi = color >> 8, lo = color;
 
-  GC9A01_data(color >> 8);
-  GC9A01_data(color);
+	GC9A01_data(hi);
+	GC9A01_data(lo);
 
 	LV_DRV_DISP_SPI_CS(1);
 }
@@ -593,7 +516,7 @@ void GC9A01_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
   GC9A01_set_addr_win(x, y, x + w - 1, y + h - 1);
 
 	uint8_t hi = color >> 8, lo = color;
-    
+
   for (y = h; y > 0; y--)
   {
     for (x = w; x > 0; x--)
@@ -650,7 +573,7 @@ int GC9A01_init(void)
 
 	GC9A01_run_cfg_script();
 
-	GC9A01_fillScreen(0xF800); // BLACK
+	GC9A01_fillScreen(0x0000); // Black
 
 	return 0;
 }
@@ -681,54 +604,13 @@ void GC9A01_flush(struct _disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 
   GC9A01_set_addr_win(area->x1, area->y1, area->x2, area->y2);
   int32_t len = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
+
+	LV_DRV_DISP_CMD_DATA(GC9A01_DATA_MODE);
   LV_DRV_DISP_SPI_WR_ARRAY((char*)color_p, len);
 
   LV_DRV_DISP_SPI_CS(1);
-
-  // int32_t x, y;
-  // for (y = area->y1; y <= area->y2; y++) {
-  //     for (x = area->x1; x <= area->x2; x++) {
-  //         GC9A01_drawPixel(x, y, color_p->full);  /* Put a pixel to the display.*/
-  //         color_p++;
-  //     }
-  // }
-
   lv_disp_flush_ready(disp_drv);         /* Indicate you are ready with the flushing*/
 }
-
-// void GC9A01_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t * color_p)
-// {
-//      /*Return if the area is out the screen*/
-//     if(x2 < 0) return;
-//     if(y2 < 0) return;
-//     if(x1 > GC9A01_HOR_RES - 1) return;
-//     if(y1 > GC9A01_VER_RES - 1) return;
-
-//     /*Truncate the area to the screen*/
-//     int32_t act_x1 = x1 < 0 ? 0 : x1;
-//     int32_t act_y1 = y1 < 0 ? 0 : y1;
-//     int32_t act_x2 = x2 > GC9A01_HOR_RES - 1 ? GC9A01_HOR_RES - 1 : x2;
-//     int32_t act_y2 = y2 > GC9A01_VER_RES - 1 ? GC9A01_VER_RES - 1 : y2;
-
-//     GC9A01_set_addr_win(act_x1, act_x2, act_y1, act_y2);
-//     /*Set the first row in */
-
-//     //uint16_t color16;
-//     uint32_t size = (act_x2 - act_x1 + 1) * (act_y2 - act_y1 + 1);
-//     uint32_t i;
-
-// // // #if LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 1
-// // //  	memcpy((uint8_t *)lcd_fb,(uint8_t *)color_p,size*sizeof(lv_color_t));
-// // // #else
-// // // #error "LV_COLOR_DEPTH not supported"
-// // // #endif
-
-//     GC9A01_command(GC9A01_RAMWR);
-
-//     GC9A01_databuf((size * 2), (uint8_t *)lcd_fb );
-
-//     lv_flush_ready();
-// }
 
 #ifdef notdef
 

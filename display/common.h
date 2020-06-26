@@ -80,6 +80,12 @@ void spi_wr(int data)
 void spi_wr_mem(char *addr, int len)
 {
 #if GC9A01_SPI_BITS == 8
+	// uint8_t *ptr = (uint8_t *)addr;
+	// for (uint32_t i = 0; i < len; i++) {
+	// 	spi.write(*ptr);
+	// 	// spi_wr(*ptr);
+	// 	ptr++;
+	// }
   spi.write(addr, len, NULL, 0);
 #endif
 #if GC9A01_SPI_BITS == 9
