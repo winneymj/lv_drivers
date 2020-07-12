@@ -15,17 +15,17 @@ DigitalOut reset(P0_7);
 
 #if GC9A01_SPI_BITS == 8
 # if GC9A01_SPI_EXT_CS
-SPI spi(SPI_PSELMOSI1, NC, SPI_PSELSCK1, NC);
+SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, NC);
 # else
-SPI spi(SPI_PSELMOSI1, NC, SPI_PSELSCK1, SPI_PSELSS1);
+SPI spi(SPI_PSELMOSI0, NC, SPI_PSELSCK0, SPI_PSELSS0);
 # endif
 #endif
 #if GC9A01_SPI_BITS == 9
 DigitalOut spi_mosi(SPI_PSELMOSI0);
-DigitalOut spi_sck(P0_17);
+DigitalOut spi_sck(SPI_PSELSCK0);
 #endif
 #if GC9A01_SPI_EXT_CS
-DigitalOut spi_cs(P0_8);
+DigitalOut spi_cs(SPI_PSELSS0);
 #endif
 
 // /* FNC PROTOTYPES */
