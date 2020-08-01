@@ -346,8 +346,8 @@ static struct GC9A01_function GC9A01_cfg_script[] = {
  */
 static void GC9A01_command(uint8_t cmd)
 {
-    LV_DRV_DISP_CMD_DATA(GC9A01_CMD_MODE);
-    LV_DRV_DISP_SPI_WR_BYTE(cmd);
+	LV_DRV_DISP_CMD_DATA(GC9A01_CMD_MODE);
+	LV_DRV_DISP_SPI_WR_BYTE(cmd);
 }
 
 /**
@@ -356,8 +356,8 @@ static void GC9A01_command(uint8_t cmd)
  */
 static void GC9A01_data(uint8_t data)
 {
-    LV_DRV_DISP_CMD_DATA(GC9A01_DATA_MODE);
-    LV_DRV_DISP_SPI_WR_BYTE(data);
+	LV_DRV_DISP_CMD_DATA(GC9A01_DATA_MODE);
+	LV_DRV_DISP_SPI_WR_BYTE(data);
 }
 
 static int GC9A01_data_array(uint8_t *buf, uint32_t len)
@@ -570,7 +570,6 @@ int GC9A01_init(void)
   LV_DRV_DISP_SPI_MODE(GC9A01_SPI_BITS, GC9A01_SPI_MODE);
 
 	GC9A01_hard_reset();
-
 	GC9A01_run_cfg_script();
 
 	GC9A01_fillScreen(0x0000); // Black

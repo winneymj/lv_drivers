@@ -112,7 +112,7 @@ void spi_mode(int bits, int mode)
 	spi.format(bits, mode);
 #endif
 }
-
+ 
 void spi_set_freq(int val)
 {
 #if GC9A01_SPI_BITS == 8
@@ -121,7 +121,7 @@ void spi_set_freq(int val)
 }
 
 void delay_ms(int val) {
-  wait_ms(val);
+  wait_us(val * 1000);
 }
 
 void delay_us(int val) {
