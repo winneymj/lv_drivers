@@ -1,21 +1,7 @@
 /**
   * @file GC9A01.c
   *
-  * Copyright 2019 OPEN-EYES S.r.l.
-  *
-  * This program is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation, either version 3 of the License, or
-  * (at your option) any later version.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  **/
+ **/
 
 
 /*********************
@@ -37,45 +23,6 @@
 #define GC9A01_CMD_MODE     0
 #define GC9A01_DATA_MODE    1
 
-#define CMD_DISPLAY_OFF         0xAE
-#define CMD_DISPLAY_ON          0xAF
-
-#define CMD_SET_DISP_START_LINE 0x40
-#define CMD_SET_PAGE            0xB0
-
-#define CMD_SET_COLUMN_UPPER    0x10
-#define CMD_SET_COLUMN_LOWER    0x00
-
-#define CMD_SET_ADC_NORMAL      0xA0
-#define CMD_SET_ADC_REVERSE     0xA1
-
-#define CMD_SET_DISP_NORMAL     0xA6
-#define CMD_SET_DISP_REVERSE    0xA7
-
-#define CMD_SET_ALLPTS_NORMAL   0xA4
-#define CMD_SET_ALLPTS_ON       0xA5
-#define CMD_SET_BIAS_9          0xA2
-#define CMD_SET_BIAS_7          0xA3
-
-#define CMD_RMW                 0xE0
-#define CMD_RMW_CLEAR           0xEE
-#define CMD_INTERNAL_RESET      0xE2
-#define CMD_SET_COM_NORMAL      0xC0
-#define CMD_SET_COM_REVERSE     0xC8
-#define CMD_SET_POWER_CONTROL   0x28
-#define CMD_SET_RESISTOR_RATIO  0x20
-#define CMD_SET_VOLUME_FIRST    0x81
-#define CMD_SET_VOLUME_SECOND   0x00
-#define CMD_SET_STATIC_OFF      0xAC
-#define CMD_SET_STATIC_ON       0xAD
-#define CMD_SET_STATIC_REG      0x00
-#define CMD_SET_BOOSTER_FIRST   0xF8
-#define CMD_SET_BOOSTER_234     0x00
-#define CMD_SET_BOOSTER_5       0x01
-#define CMD_SET_BOOSTER_6       0x03
-#define CMD_NOP                 0xE3
-#define CMD_TEST                0xF0
-
 /**********************
  *      TYPEDEFS
  **********************/
@@ -83,19 +30,15 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-//static void GC9A01_sync(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 static void GC9A01_command(uint8_t cmd);
 static void GC9A01_data(uint8_t data);
 static void GC9A01_set_addr_win(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
 
-
 /**********************
  *  STATIC VARIABLES
  **********************/
-
-// static uint16_t lcd_fb[GC9A01_FB_SIZE];
-//static uint8_t pagemap[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
-
+// Documentation on op codes for GC9A01 are very hard to find.
+// Will document should they be found.
 static struct GC9A01_function GC9A01_cfg_script[] = {
 	{ GC9A01_START, GC9A01_START},
 	{ GC9A01_CMD, 0xEF},
@@ -327,7 +270,7 @@ static struct GC9A01_function GC9A01_cfg_script[] = {
 
 	{ GC9A01_CMD, 0x11}, // Sleep Out Mode
 	{ GC9A01_DELAY, 120},
-	{ GC9A01_CMD, 0x29}, // Display ON
+	{ GC9A01_CMD, GC9A01_DISPON}, // Display ON
 	{ GC9A01_DELAY, 255},
 	{ GC9A01_END, GC9A01_END},
 };
@@ -572,7 +515,9 @@ int GC9A01_init(void)
 	GC9A01_hard_reset();
 	GC9A01_run_cfg_script();
 
-	GC9A01_fillScreen(0x0000); // Black
+	// GC9A01_fillScreen(0x0000); // Black
+	// GC9A01_fillScreen(0xFFFF); // White
+	GC9A01_fillScreen(0xAAAA); // ?
 
 	return 0;
 }
